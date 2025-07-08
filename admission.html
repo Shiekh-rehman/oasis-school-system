@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admissions - Oasis School System</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: #f8fbff;
+      color: #222;
+    }
+
+    header {
+      background: #ffffff;
+      padding: 20px 50px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 800;
+      color: #0077ff;
+    }
+
+    nav a {
+      margin-left: 25px;
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #0077ff;
+    }
+
+    .admission-section {
+      padding: 80px 30px;
+      max-width: 600px;
+      margin: auto;
+    }
+
+    .admission-section h2 {
+      text-align: center;
+      font-size: 36px;
+      color: #0077ff;
+      margin-bottom: 40px;
+    }
+
+    form {
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.05);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    input, select, textarea {
+      padding: 12px 15px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      transition: 0.3s ease;
+      width: 100%;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      border-color: #0077ff;
+      outline: none;
+    }
+
+    button {
+      background: #0077ff;
+      color: #fff;
+      padding: 14px;
+      border: none;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background: #005fcc;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px;
+      font-size: 14px;
+      color: #666;
+      background: #f2f2f2;
+      margin-top: 80px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">Oasis Valley School</div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="about.html">About</a>
+      <a href="admission.html">Admissions</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <section class="admission-section">
+    <h2>Admission Form</h2>
+    <form action="https://api.whatsapp.com/send" method="get" target="_blank" onsubmit="return sendToWhatsApp()">
+      <input type="text" id="name" placeholder="Student Name" required>
+      <input type="text" id="father" placeholder="Father's Name" required>
+      <input type="text" id="whatsapp" placeholder="WhatsApp Number" required>
+      <input type="email" id="email" placeholder="Email Address" required>
+      <select id="class" required>
+        <option value="">Select Class</option>
+        <option>Play Group</option>
+        <option>Nursery</option>
+        <option>Prep</option>
+        <option>Class 1</option>
+        <option>Class 2</option>
+        <option>Class 3</option>
+        <option>Class 4</option>
+        <option>Class 5</option>
+        <option>Class 6</option>
+        <option>Class 7</option>
+        <option>Class 8</option>
+        <option>Class 9</option>
+        <option>Class 10</option>
+      </select>
+      <button type="submit">Submit on WhatsApp</button>
+    </form>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 Oasis School System. All rights reserved.</p>
+  </footer>
+
+  <script>
+    function sendToWhatsApp() {
+      const name = document.getElementById("name").value;
+      const father = document.getElementById("father").value;
+      const whatsapp = document.getElementById("whatsapp").value;
+      const email = document.getElementById("email").value;
+      const studentClass = document.getElementById("class").value;
+
+      const message = `Admission Inquiry:%0AName: ${name}%0AFather's Name: ${father}%0AWhatsApp: ${whatsapp}%0AEmail: ${email}%0AClass: ${studentClass}`;
+
+      const adminNumber = "923001234567"; // Replace with your admin's WhatsApp number
+      const url = `https://api.whatsapp.com/send?phone=${adminNumber}&text=${message}`;
+
+      window.open(url, '_blank');
+      return false;
+    }
+  </script>
+</body>
+</html>

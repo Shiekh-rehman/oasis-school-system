@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Oasis School System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(to bottom right, #fdfdfd, #f3f8ff);
+            color: #222;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 50px;
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 999;
+            animation: slideDown 1s ease forwards;
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 700;
+            color: #0077ff;
+        }
+
+        nav a {
+            margin-left: 25px;
+            text-decoration: none;
+            color: #222;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #0077ff;
+        }
+
+        .hero-carousel {
+            position: relative;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .carousel-images {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .hero-slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 1.5s ease;
+        }
+
+        .hero-slide.active {
+            opacity: 1;
+        }
+
+        .hero-carousel .hero-content {
+            position: relative;
+            z-index: 2;
+            color: white;
+            text-align: center;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 0 20px;
+        }
+
+        .hero-carousel .hero-content h1 {
+            font-size: 56px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-carousel .hero-content p {
+            font-size: 22px;
+            margin-bottom: 30px;
+        }
+
+        .hero-carousel::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 1;
+        }
+
+        .hero {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: url('https://images.unsplash.com/photo-1601597111325-0c7e6c6f8093') center/cover no-repeat;
+            position: relative;
+            text-align: center;
+            padding: 100px 20px 40px;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-content {
+            position: relative;
+            color: white;
+            z-index: 2;
+            animation: fadeInUp 1.5s ease forwards;
+        }
+
+        .hero-content h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .hero-content p {
+            font-size: 20px;
+            margin-bottom: 30px;
+        }
+
+        .cta-btn {
+            background: #0077ff;
+            color: white;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .cta-btn:hover {
+            background: #005ad3;
+        }
+
+        .about,
+        .features {
+            padding: 80px 50px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+
+        .about {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            align-items: center;
+        }
+
+        .about-text {
+            flex: 1;
+            animation: fadeInLeft 1.2s ease forwards;
+        }
+
+        .about-img {
+            flex: 1;
+            animation: fadeInRight 1.2s ease forwards;
+        }
+
+        .about-img img {
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .features h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #0077ff;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.06);
+            text-align: center;
+            transition: transform 0.4s ease;
+            animation: zoomIn 1s ease forwards;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            transform: scale(1.08);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+            transform: rotate(360deg);
+
+        }
+
+        .card i {
+            font-size: 36px;
+            color: #0077ff;
+            margin-bottom: 15px;
+        }
+
+        footer {
+            background: #f2f2f2;
+            text-align: center;
+            padding: 25px;
+            margin-top: 50px;
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+            }
+
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes zoomIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            nav {
+                margin-top: 10px;
+            }
+
+            .about {
+                flex-direction: column;
+            }
+        }
+        /* Updated CSS for class cards with centered text and improved design */
+.class-section {
+  background: #ffffff;
+  padding: 80px 30px;
+  text-align: center;
+}
+
+.class-section h2 {
+  font-size: 36px;
+  color: #0077ff;
+  margin-bottom: 40px;
+}
+
+.class-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+  max-width: 1000px;
+  margin: auto;
+}
+
+.class-card {
+  background: linear-gradient(to top right, #e6f0ff, #f0faff);
+  border-radius: 18px;
+  padding: 40px 20px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #0077cc;
+  box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.class-card:hover {
+  transform: scale(1.1) rotate(0.5deg);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+}
+
+.class-card p {
+  font-size: 15px;
+  font-weight: 400;
+  color: #333;
+  margin-top: 12px;
+  line-height: 1.5;
+  max-width: 230px;
+}
+
+@media (max-width: 500px) {
+  .class-card {
+    padding: 30px 15px;
+  }
+
+  .class-card p {
+    font-size: 14px;
+  }
+}
+
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="logo">Oasis Valley School</div>
+        <nav>
+            <a href="#">Home</a>
+            <a href="./about.html">About</a>
+            <a href="./admission.html">Admissions</a>
+            <a href="./contact.html">Contact</a>
+        </nav>
+    </header>
+
+    <!-- Hero Carousel Section -->
+    <section class="hero-carousel sr-fade-up">
+        <div class="carousel-images">
+            <img src="https://images.unsplash.com/photo-1498243691581-b145c3f54a5a?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8N3x8c2Nob29sfGVufDB8fDB8fHww"
+                class="hero-slide active" alt="Slide 1" />
+            <img src="https://images.unsplash.com/photo-1588075592446-265fd1e6e76f?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MjB8fHNjaG9vbHxlbnwwfHwwfHx8MA%3D%3D"
+                class="hero-slide" alt="Slide 2" />
+            <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fHNjaG9vbHxlbnwwfHwwfHx8MA%3D%3D"
+                class="hero-slide" alt="Slide 3" />
+        </div>
+        <div class="hero-content">
+            <h1>Empowering Future Generations</h1>
+            <p>Discover excellence in education at Oasis School System.</p>
+            <button class="cta-btn">Explore More</button>
+        </div>
+    </section>
+
+
+    <section class="about">
+        <div class="about-text">
+            <h2>About Us</h2>
+            <p>We are committed to holistic education, state-of-the-art classrooms, and a nurturing environment that
+                promotes excellence, creativity, and growth in every student.</p>
+        </div>
+        <div class="about-img">
+            <img src="https://images.unsplash.com/photo-1516383607781-913a19294fd1?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8c2Nob29sfGVufDB8fDB8fHww"
+                alt="about">
+        </div>
+    </section>
+    <section class="class-section">
+  <h2>Our Classes</h2>
+  <div class="class-grid">
+    <div class="class-card">
+      Play Group
+      <p>Focus on sensory development, colors, shapes, and playful learning.</p>
+    </div>
+    <div class="class-card">
+      Nursery
+      <p>Building early language, fine motor skills, and interactive social habits.</p>
+    </div>
+    <div class="class-card">
+      Prep
+      <p>Introduction to alphabets, numbers, rhymes, and basic writing skills.</p>
+    </div>
+    <div class="class-card">
+      Class 1
+      <p>Foundational subjects with reading, writing, and math concepts.</p>
+    </div>
+    <div class="class-card">
+      Class 2
+      <p>Enhancing comprehension, number operations, and confidence building.</p>
+    </div>
+    <div class="class-card">
+      Class 3
+      <p>Developing logical reasoning, sentence structure, and science basics.</p>
+    </div>
+    <div class="class-card">
+      Class 4
+      <p>Subject integration with focus on grammar, science experiments, and presentations.</p>
+    </div>
+    <div class="class-card">
+      Class 5
+      <p>Preparing for upper grades with advanced reading, math, and group activities.</p>
+    </div>
+    <div class="class-card">
+      Class 6
+      <p>Introduction to subject specialization with digital learning methods.</p>
+    </div>
+    <div class="class-card">
+      Class 7
+      <p>In-depth academic concepts, personal development, and assessments.</p>
+    </div>
+    <div class="class-card">
+      Class 8
+      <p>Strong emphasis on exam preparation, writing skills, and discipline.</p>
+    </div>
+    <div class="class-card">
+      Class 9
+      <p>Matric board pattern begins with deeper academic and revision techniques.</p>
+    </div>
+    <div class="class-card">
+      Class 10
+      <p>Final matriculation prep, board exams strategy, and career guidance sessions.</p>
+    </div>
+  </div>
+</section>
+
+
+    <section class="features">
+        <h2>Why Choose Oasis?</h2>
+        <div class="cards">
+            <div class="card">
+                <i class="fas fa-user-graduate"></i>
+                <h3>Expert Faculty</h3>
+                <p>Qualified teachers with a passion for learning and mentoring.</p>
+            </div>
+            <div class="card">
+                <i class="fas fa-laptop-code"></i>
+                <h3>Modern Classrooms</h3>
+                <p>Smart boards, digital tools and immersive learning spaces.</p>
+            </div>
+            <div class="card">
+                <i class="fas fa-futbol"></i>
+                <h3>Sports Facilities</h3>
+                <p>Indoor & outdoor spaces for fitness, games, and development.</p>
+            </div>
+            <div class="card">
+                <i class="fas fa-book-reader"></i>
+                <h3>Learning Culture</h3>
+                <p>Personalized education that shapes character and knowledge.</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 Oasis School System. Designed with ❤️ for education.</p>
+    </footer>
+
+</body>
+<script>
+    const slides = document.querySelectorAll('.hero-slide');
+    let currentSlide = 0;
+
+    function showNextSlide() {
+        slides[currentSlide].classList.remove('active');
+        currentSlide = (currentSlide + 1) % slides.length;
+        slides[currentSlide].classList.add('active');
+    }
+
+    setInterval(showNextSlide, 5000); // change every 5 sec
+</script>
+
+</html>

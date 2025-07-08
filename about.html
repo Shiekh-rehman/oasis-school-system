@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us - Oasis School System</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      background: #f8fbff;
+      color: #222;
+      line-height: 1.6;
+    }
+
+    header {
+      background: #ffffff;
+      padding: 20px 50px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 800;
+      color: #0077ff;
+    }
+
+    nav a {
+      margin-left: 25px;
+      text-decoration: none;
+      color: #333;
+      font-weight: 500;
+      transition: color 0.3s;
+    }
+
+    nav a:hover {
+      color: #0077ff;
+    }
+
+    .about-hero {
+      background: url('https://images.unsplash.com/photo-1588072432836-e10032774350') center/cover no-repeat;
+      height: 60vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-align: center;
+      position: relative;
+    }
+
+    .about-hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    .about-hero h1 {
+      position: relative;
+      font-size: 48px;
+      z-index: 1;
+      text-shadow: 2px 2px 6px rgba(0,0,0,0.3);
+    }
+
+    .about-content {
+      max-width: 1000px;
+      margin: 80px auto;
+      padding: 0 30px;
+    }
+
+    .about-content h2 {
+      font-size: 36px;
+      color: #0077ff;
+      margin-bottom: 20px;
+    }
+
+    .about-content p {
+      font-size: 18px;
+      margin-bottom: 25px;
+    }
+
+    .about-values {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+      margin-top: 40px;
+    }
+
+    .value-box {
+      flex: 1 1 280px;
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+      transition: transform 0.3s ease;
+    }
+
+    .value-box:hover {
+      transform: translateY(-10px);
+    }
+
+    .value-box i {
+      font-size: 36px;
+      color: #0077ff;
+      margin-bottom: 15px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 30px;
+      font-size: 14px;
+      color: #666;
+      background: #f2f2f2;
+      margin-top: 80px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">Oasis Valley School</div>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="./about.html">About</a>
+      <a href="./admission.html">Admissions</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
+
+  <section class="about-hero">
+    <h1>About Oasis School System</h1>
+  </section>
+
+  <section class="about-content">
+    <h2>Our Vision & Mission</h2>
+    <p>At Oasis School System, we believe in nurturing future leaders through a balanced education that combines academic excellence with moral integrity. Our aim is to create a learning environment where every child thrives, grows, and discovers their full potential.</p>
+    <p>Founded with the vision of revolutionizing education, Oasis School is more than a school — it's a movement towards a better future. Our faculty is dedicated to supporting students in their journey of self-discovery, academic achievement, and character building.</p>
+
+    <div class="about-values">
+      <div class="value-box">
+        <i class="fas fa-graduation-cap"></i>
+        <h3>Academic Excellence</h3>
+        <p>Providing a curriculum that challenges and inspires students to achieve their best.</p>
+      </div>
+      <div class="value-box">
+        <i class="fas fa-users"></i>
+        <h3>Community & Respect</h3>
+        <p>Fostering an inclusive environment where every student feels valued and respected.</p>
+      </div>
+      <div class="value-box">
+        <i class="fas fa-lightbulb"></i>
+        <h3>Innovation & Creativity</h3>
+        <p>Encouraging critical thinking and creative expression through modern teaching methods.</p>
+      </div>
+    </div>
+  </section>
+  
+
+  <footer>
+    <p>&copy; 2025 Oasis School System. All rights reserved.</p>
+  </footer>
+</body>
+</html>
