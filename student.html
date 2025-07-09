@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Smart Scholar - Student Portal</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to right, #dfe9f3, #ffffff);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      padding: 30px;
+      max-width: 750px;
+      width: 95%;
+      animation: fadeIn 1s ease-in;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #004085;
+    }
+    .input-group {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    input[type="text"] {
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      width: 60%;
+    }
+    button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      border: none;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .student-data {
+      display: none;
+      margin-top: 20px;
+      animation: fadeIn 0.8s ease-in-out;
+    }
+    .error-msg {
+      display: none;
+      text-align: center;
+      color: red;
+      font-weight: bold;
+    }
+    .progress {
+      width: 100%; height: 20px;
+      background: #e0e0e0;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+    .progress-inner {
+      height: 100%;
+      background: linear-gradient(to right, #00c9ff, #92fe9d);
+      width: 0%;
+      border-radius: 10px;
+      transition: width 1.2s ease-in-out;
+    }
+    .attendance-circle svg {
+      transform: rotate(-90deg);
+      margin: 0 auto;
+      display: block;
+    }
+    .student-image {
+      width: 100px; height: 100px;
+      object-fit: cover;
+      border-radius: 50%;
+      margin: 0 auto 10px auto;
+      display: block;
+      border: 3px solid #007bff;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+    th {
+      background-color: #f1f9ff;
+      color: #004085;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>The Smart Scholar - Student Portal</h2>
+    <div class="input-group">
+      <input type="text" id="rollNoInput" placeholder="Enter Roll Number">
+      <button onclick="fetchStudent()">Enter</button>
+    </div>
+    <p id="errorMsg" class="error-msg">Student not found. Please check roll number.</p>
+
+    <div class="student-data" id="studentData">
+      <img src="" alt="Student Image" id="studentImage" class="student-image">
+      <p><strong>Name:</strong> <span id="studentName"></span></p>
+      <p><strong>Father's Name:</strong> <span id="fatherName"></span></p>
+      <p><strong>Class:</strong> <span id="studentClass"></span></p>
+      <p><strong>Roll No:</strong> <span id="studentRoll"></span></p>
+      <p><strong>Phone Number:</strong> <span id="studentPhone"></span></p>
+
+      <div class="progress-bar">
+        <p><strong>Academic Progress:</strong> <span id="progressText"></span></p>
+        <div class="progress">
+          <div class="progress-inner" id="progressFill"></div>
+        </div>
+      </div>
+
+      <div class="attendance-circle">
+        <p><strong>Attendance:</strong> <span id="attendancePercent"></span></p>
+        <svg width="120" height="120">
+          <circle cx="60" cy="60" r="50" stroke="#e0e0e0" stroke-width="10" fill="none"/>
+          <circle id="attendanceCircle" cx="60" cy="60" r="50" stroke="#28a745" stroke-width="10" fill="none" stroke-dasharray="314" stroke-dashoffset="314" />
+        </svg>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Subject</th>
+            <th>Test 1</th>
+            <th>Test 2</th>
+            <th>Test 3</th>
+          </tr>
+        </thead>
+        <tbody id="subjectTable"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const students = {
+      "101": {
+        name: "Jannat Noman",
+        father: "M. Noman",
+        class: "Nursery",
+        roll: "101",
+        phone: "0311-5050039",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+        progress: 60,
+        attendance: 88,
+        subjects: {
+          Math: [85, 78, 90],
+          English: [80, 75, 88],
+          Urdu: [80, 75, 88],
+          Computer: [80, 75, 88],
+          Islamiyat: [80, 75, 88],
+          GeneralKnowledge: [80, 75, 88],
+          Science: [90, 85, 92]
+        }
+      },
+      "102": {
+        name: "Affan Bazal",
+        father: "Bazal Aamer",
+        class: "Nursery",
+        roll: "102",
+        phone: "0333-5594525",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+        progress: 73,
+        attendance: 95,
+        subjects: {
+          Math: [95, 88, 92],
+          English: [90, 85, 93],
+          Science: [96, 94, 98]
+        }
+      },
+      "103": {
+        name: "Hurain Jamshed",
+        father: "Jamshed Iqbal",
+        class: "Nursery",
+        roll: "103",
+        phone: "0336-1568628",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+        progress: 73,
+        attendance: 95,
+        subjects: {
+          Math: [95, 88, 92],
+          English: [90, 85, 93],
+          Science: [96, 94, 98]
+        }
+      },
+         "104": {
+        name: "Adyan Noman",
+        father: "Noman Khan",
+        class: "Nursery",
+        roll: "104",
+        phone: "0331-0308111",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+        progress: 73,
+        attendance: 95,
+        subjects: {
+          Math: [95, 88, 92],
+          English: [90, 85, 93],
+          Science: [96, 94, 98]
+        }
+      },
+         "105": {
+        name: "Abdul Rehman Noman",
+        father: "Umer Khurshid",
+        class: "Nursery",
+        roll: "105",
+        phone: "0303-5271388",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+        progress: 73,
+        attendance: 95,
+        subjects: {
+          Math: [95, 88, 92],
+          English: [90, 85, 93],
+          Science: [96, 94, 98]
+        }
+      },
+         "106": {
+        name: "Uswa batool",
+        father: "Saeed Akhter",
+        class: "Nursery",
+        roll: "106",
+        phone: "0311-5486145",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+        progress: 73,
+        attendance: 95,
+        subjects: {
+          Math: [95, 88, 92],
+          English: [90, 85, 93],
+          Science: [96, 94, 98]
+        }
+      },
+      
+         "107": {
+        name: "Ayesha Shafqat",
+        father: "Ajmal Ghafoor",
+        class: "Nursery",
+        roll: "107",
+        phone: "0311-5486145",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+        progress: 73,
+        attendance: 95,
+        subjects: {
+          Math: [95, 88, 92],
+          English: [90, 85, 93],
+          Science: [96, 94, 98]
+        }
+      },
+         "108": {
+        name: "Abdullah",
+        father: "Abdul Wakeel",
+        class: "1",
+        roll: "108",
+        phone: "Nil",
+        image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+        progress: 73,
+        attendance: 95,
+        subjects: {
+          Math: [95, 88, 92],
+          English: [90, 85, 93],
+          Science: [96, 94, 98]
+        }
+      },
+        "109": {
+            name: "Ibaad",
+            father: "Saqib Mehmood",
+            class: "1",
+            roll: "109",
+            phone: "0333-5500550",
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+            progress: 75,
+            attendance: 88,
+            subjects: {
+            Math: [0, 0, 0],
+            English: [0, 0, 0],
+            Urdu: [0, 0, 0],
+            Computer: [0, 0, 0],
+            Islamiyat: [0, 0, 0],
+            GeneralKnowledge: [0, 0, 0],
+            Science: [0, 0, 0]
+            }
+        },
+        "110": {
+            name: "Zarish",
+            father: "Khawar",
+            class: "1",
+            roll: "109",
+            phone: "0333-5500550",
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+            progress: 75,
+            attendance: 88,
+            subjects: {
+            Math: [0, 0, 0],
+            English: [0, 0, 0],
+            Urdu: [0, 0, 0],
+            Computer: [0, 0, 0],
+            Islamiyat: [0, 0, 0],
+            GeneralKnowledge: [0, 0, 0],
+            Science: [0, 0, 0]
+            }
+        },
+        "111": {
+            name: "Khadija",
+            father: "Umer Khurashid",
+            class: "1",
+            roll: "111",
+            phone: "Nil",
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+            progress: 75,
+            attendance: 88,
+            subjects: {
+            Math: [0, 0, 0],
+            English: [0, 0, 0],
+            Urdu: [0, 0, 0],
+            Computer: [0, 0, 0],
+            Islamiyat: [0, 0, 0],
+            GeneralKnowledge: [0, 0, 0],
+            Science: [0, 0, 0]
+            }
+        },
+        "111": {
+            name: "Maryam Bibi",
+            father: "Abdul Wakeel",
+            class: "1",
+            roll: "111",
+            phone: "Nil",
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+            progress: 75,
+            attendance: 88,
+            subjects: {
+            Math: [0, 0, 0],
+            English: [0, 0, 0],
+            Urdu: [0, 0, 0],
+            Computer: [0, 0, 0],
+            Islamiyat: [0, 0, 0],
+            GeneralKnowledge: [0, 0, 0],
+            Science: [0, 0, 0]
+            }
+        },
+        "112": {
+            name: "Maryam Bibi",
+            father: "Abdul Wakeel",
+            class: "1",
+            roll: "112",
+            phone: "Nil",
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+            progress: 75,
+            attendance: 88,
+            subjects: {
+            Math: [0, 0, 0],
+            English: [0, 0, 0],
+            Urdu: [0, 0, 0],
+            Computer: [0, 0, 0],
+            Islamiyat: [0, 0, 0],
+            GeneralKnowledge: [0, 0, 0],
+            Science: [0, 0, 0]
+            }
+        },
+        "113": {
+            name: "Manat Fatima ",
+            father: "M saleem",
+            class: "1",
+            roll: "113",
+            phone: "0312-5779922",
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+            progress: 75,
+            attendance: 88,
+            subjects: {
+            Math: [0, 0, 0],
+            English: [0, 0, 0],
+            Urdu: [0, 0, 0],
+            Computer: [0, 0, 0],
+            Islamiyat: [0, 0, 0],
+            GeneralKnowledge: [0, 0, 0],
+            Science: [0, 0, 0]
+            }
+        },
+        "114": {
+            name: "Kher Muhammad",
+            father: "Abdul Rahim",
+            class: "2",
+            roll: "114",
+            phone: "0333-7899776",
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+            progress: 75,
+            attendance: 88,
+            subjects: {
+            Math: [0, 0, 0],
+            English: [0, 0, 0],
+            Urdu: [0, 0, 0],
+            Computer: [0, 0, 0],
+            Islamiyat: [0, 0, 0],
+            GeneralKnowledge: [0, 0, 0],
+            Science: [0, 0, 0]
+            }
+        },
+        "115": {
+            name: "Hira",
+            father: "Jamshed Iqbal",
+            class: "1",
+            roll: "115",
+            phone: "0336-1568628",
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+            progress: 75,
+            attendance: 88,
+            subjects: {
+            Math: [0, 0, 0],
+            English: [0, 0, 0],
+            Urdu: [0, 0, 0],
+            Computer: [0, 0, 0],
+            Islamiyat: [0, 0, 0],
+            GeneralKnowledge: [0, 0, 0],
+            Science: [0, 0, 0]
+            }
+        },
+        "116": {
+            name: "Ifra Batool",
+            father: "Syed Abdul Bari Bukhari",
+            class: "2",
+            roll: "116",
+            phone: "0315-8516837",
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+            progress: 75,
+            attendance: 88,
+            subjects: {
+            Math: [0, 0, 0],
+            English: [0, 0, 0],
+            Urdu: [0, 0, 0],
+            Computer: [0, 0, 0],
+            Islamiyat: [0, 0, 0],
+            GeneralKnowledge: [0, 0, 0],
+            Science: [0, 0, 0]
+            }
+        },
+        "117": {
+            name: "Meeshyam",
+            father: "Muhammad Bilal",
+            class: "1",
+            roll: "117",
+            phone: "0345-5479886",
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+            progress: 75,
+            attendance: 88,
+            subjects: {
+            Math: [0, 0, 0],
+            English: [0, 0, 0],
+            Urdu: [0, 0, 0],
+            Computer: [0, 0, 0],
+            Islamiyat: [0, 0, 0],
+            GeneralKnowledge: [0, 0, 0],
+            Science: [0, 0, 0]
+            }
+        },
+        "118": {
+            name: "Sahal",
+            father: "Muhammad Bilal",
+            class: "1",
+            roll: "118",
+            phone: "0345-5479886",
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+            progress: 75,
+            attendance: 88,
+            subjects: {
+            Math: [0, 0, 0],
+            English: [0, 0, 0],
+            Urdu: [0, 0, 0],
+            Computer: [0, 0, 0],
+            Islamiyat: [0, 0, 0],
+            GeneralKnowledge: [0, 0, 0],
+            Science: [0, 0, 0]
+            }
+        },
+        "119": {
+            name: "Imsilah",
+            father: "Muhammad Ashraf",
+            class: "1",
+            roll: "119",
+            phone: "0314-5239719",
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+            progress: 75,
+            attendance: 88,
+            subjects: {
+            Math: [0, 0, 0],
+            English: [0, 0, 0],
+            Urdu: [0, 0, 0],
+            Computer: [0, 0, 0],
+            Islamiyat: [0, 0, 0],
+            GeneralKnowledge: [0, 0, 0],
+            Science: [0, 0, 0]
+            }
+        },
+        "120": {
+            name: "Dilnaz",
+            father: "Abdul Rahim",
+            class: "2",
+            roll: "120",
+            phone: "0333-7899776",
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+            progress: 75,
+            attendance: 88,
+            subjects: {
+            Math: [0, 0, 0],
+            English: [0, 0, 0],
+            Urdu: [0, 0, 0],
+            Computer: [0, 0, 0],
+            Islamiyat: [0, 0, 0],
+            GeneralKnowledge: [0, 0, 0],
+            Science: [0, 0, 0]
+            }
+        },
+        "121": {
+            name: "Eshaal",
+            father: "Sajid Mehmood",
+            class: "4",
+            roll: "121",
+            phone: "0332-5568046",
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+            progress: 75,
+            attendance: 88,
+            subjects: {
+            Math: [0, 0, 0],
+            English: [0, 0, 0],
+            Urdu: [0, 0, 0],
+            Computer: [0, 0, 0],
+            Islamiyat: [0, 0, 0],
+            GeneralKnowledge: [0, 0, 0],
+            Science: [0, 0, 0]
+            }
+        },
+        "122": {
+            name: "Ayesha Batool",
+            father: "Muhammad Ashraf",
+            class: "4",
+            roll: "122",
+            phone: "0314-5239719",
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+            progress: 75,
+            attendance: 88,
+            subjects: {
+            Math: [0, 0, 0],
+            English: [0, 0, 0],
+            Urdu: [0, 0, 0],
+            Computer: [0, 0, 0],
+            Islamiyat: [0, 0, 0],
+            GeneralKnowledge: [0, 0, 0],
+            Science: [0, 0, 0]
+            }
+        },
+        "123": {
+            name: "Malaika",
+            father: "Muhammad Shahbaz",
+            class: "3",
+            roll: "123",
+            phone: "0314-5134877",
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+            progress: 75,
+            attendance: 88,
+            subjects: {
+            Math: [0, 0, 0],
+            English: [0, 0, 0],
+            Urdu: [0, 0, 0],
+            Computer: [0, 0, 0],
+            Islamiyat: [0, 0, 0],
+            GeneralKnowledge: [0, 0, 0],
+            Science: [0, 0, 0]
+            }
+        },
+        "124": {
+            name: "Aleena",
+            father: "Muhammad Shahbaz",
+            class: "3",
+            roll: "124",
+            phone: "0314-5134877",
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+            progress: 75,
+            attendance: 88,
+            subjects: {
+            Math: [0, 0, 0],
+            English: [0, 0, 0],
+            Urdu: [0, 0, 0],
+            Computer: [0, 0, 0],
+            Islamiyat: [0, 0, 0],
+            GeneralKnowledge: [0, 0, 0],
+            Science: [0, 0, 0]
+            }
+        },
+        "125": {
+            name: "Ali Hassan",
+            father: "Muhammad Zaheer",
+            class: "3",
+            roll: "125",
+            phone: "0355-5981827",
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+            progress: 75,
+            attendance: 88,
+            subjects: {
+            Math: [0, 0, 0],
+            English: [0, 0, 0],
+            Urdu: [0, 0, 0],
+            Computer: [0, 0, 0],
+            Islamiyat: [0, 0, 0],
+            GeneralKnowledge: [0, 0, 0],
+            Science: [0, 0, 0]
+            }
+        },
+        "126": {
+            name: "Khushnuma",
+            father: "Abdul Rahim",
+            class: "5",
+            roll: "126",
+            phone: "0333-7899776",
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+            progress: 75,
+            attendance: 88,
+            subjects: {
+            Math: [0, 0, 0],
+            English: [0, 0, 0],
+            Urdu: [0, 0, 0],
+            Computer: [0, 0, 0],
+            Islamiyat: [0, 0, 0],
+            GeneralKnowledge: [0, 0, 0],
+            Science: [0, 0, 0]
+            }
+        },
+        "127": {
+            name: "Aliyan",
+            father: "M. Dildar Ali",
+            class: "4",
+            roll: "127",
+            phone: "0310-5142691",
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+            progress: 75,
+            attendance: 88,
+            subjects: {
+            Math: [0, 0, 0],
+            English: [0, 0, 0],
+            Urdu: [0, 0, 0],
+            Computer: [0, 0, 0],
+            Islamiyat: [0, 0, 0],
+            GeneralKnowledge: [0, 0, 0],
+            Science: [0, 0, 0]
+            }
+        },
+        "128": {
+            name: "Awad Ahmed Khan",
+            father: "M.Noman",
+            class: "4",
+            roll: "128",
+            phone: "0331-0308111",
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+            progress: 75,
+            attendance: 88,
+            subjects: {
+            Math: [0, 0, 0],
+            English: [0, 0, 0],
+            Urdu: [0, 0, 0],
+            Computer: [0, 0, 0],
+            Islamiyat: [0, 0, 0],
+            GeneralKnowledge: [0, 0, 0],
+            Science: [0, 0, 0]
+            }
+        },
+        "129": {
+            name: "M. Hashir",
+            father: "Saqib Mehmood",
+            class: "4",
+            roll: "129",
+            phone: "0333-550550",
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+            progress: 75,
+            attendance: 88,
+            subjects: {
+            Math: [0, 0, 0],
+            English: [0, 0, 0],
+            Urdu: [0, 0, 0],
+            Computer: [0, 0, 0],
+            Islamiyat: [0, 0, 0],
+            GeneralKnowledge: [0, 0, 0],
+            Science: [0, 0, 0]
+            }
+        },
+        "130": {
+            name: "M. Adil",
+            father: "Muhammad shehbaz",
+            class: "5",
+            roll: "130",
+            phone: "0333-550550",
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+            progress: 75,
+            attendance: 88,
+            subjects: {
+            Math: [0, 0, 0],
+            English: [0, 0, 0],
+            Urdu: [0, 0, 0],
+            Computer: [0, 0, 0],
+            Islamiyat: [0, 0, 0],
+            GeneralKnowledge: [0, 0, 0],
+            Science: [0, 0, 0]
+            }
+        },
+        "131": {
+            name: "Minahil",
+            father: "Abdul Hafeez",
+            class: "7",
+            roll: "131",
+            phone: "0311-5482727",
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+            progress: 75,
+            attendance: 88,
+            subjects: {
+            Math: [0, 0, 0],
+            English: [0, 0, 0],
+            Urdu: [0, 0, 0],
+            Computer: [0, 0, 0],
+            Islamiyat: [0, 0, 0],
+            GeneralKnowledge: [0, 0, 0],
+            Science: [0, 0, 0]
+            }
+        },
+        "132": {
+            name: "Ali Hassan",
+            father: "M.Umer Hayat",
+            class: "5",
+            roll: "132",
+            phone: "nil",
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+            progress: 75,
+            attendance: 88,
+            subjects: {
+            Math: [0, 0, 0],
+            English: [0, 0, 0],
+            Urdu: [0, 0, 0],
+            Computer: [0, 0, 0],
+            Islamiyat: [0, 0, 0],
+            GeneralKnowledge: [0, 0, 0],
+            Science: [0, 0, 0]
+            }
+        },
+        "133": {
+            name: "Manahil",
+            father: "M.Zubair",
+            class: "5",
+            roll: "133",
+            phone: "0318-5451543",
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+            progress: 75,
+            attendance: 88,
+            subjects: {
+            Math: [0, 0, 0],
+            English: [0, 0, 0],
+            Urdu: [0, 0, 0],
+            Computer: [0, 0, 0],
+            Islamiyat: [0, 0, 0],
+            GeneralKnowledge: [0, 0, 0],
+            Science: [0, 0, 0]
+            }
+        },
+        "134": {
+            name: "M. Sajjad",
+            father: "M.Saleem",
+            class: "5",
+            roll: "134",
+            phone: "0312-5779922",
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+            progress: 75,
+            attendance: 88,
+            subjects: {
+            Math: [0, 0, 0],
+            English: [0, 0, 0],
+            Urdu: [0, 0, 0],
+            Computer: [0, 0, 0],
+            Islamiyat: [0, 0, 0],
+            GeneralKnowledge: [0, 0, 0],
+            Science: [0, 0, 0]
+            }
+        },
+        "135": {
+            name: "M. Sajjad",
+            father: "M.Saleem",
+            class: "5",
+            roll: "135",
+            phone: "0312-5779922",
+            image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSzP2x_VX7r_vALhN71mlBK1AUBUMcsKt0wg&s",
+            progress: 75,
+            attendance: 88,
+            subjects: {
+            Math: [0, 0, 0],
+            English: [0, 0, 0],
+            Urdu: [0, 0, 0],
+            Computer: [0, 0, 0],
+            Islamiyat: [0, 0, 0],
+            GeneralKnowledge: [0, 0, 0],
+            Science: [0, 0, 0]
+            }
+        },
+
+    };
+
+    function fetchStudent() {
+      const rollNo = document.getElementById('rollNoInput').value.trim();
+      const data = students[rollNo];
+      const studentData = document.getElementById('studentData');
+      const errorMsg = document.getElementById('errorMsg');
+
+      if (data) {
+        document.getElementById('studentName').textContent = data.name;
+        document.getElementById('fatherName').textContent = data.father;
+        document.getElementById('studentClass').textContent = data.class;
+        document.getElementById('studentRoll').textContent = data.roll;
+        document.getElementById('studentPhone').textContent = data.phone;
+        document.getElementById('studentImage').src = data.image;
+
+        document.getElementById('progressFill').style.width = data.progress + '%';
+        document.getElementById('progressText').textContent = data.progress + '%';
+
+        const circle = document.getElementById('attendanceCircle');
+        const attendanceOffset = 314 - (314 * data.attendance / 100);
+        circle.style.strokeDashoffset = attendanceOffset;
+        document.getElementById('attendancePercent').textContent = data.attendance + '%';
+
+        let subjectRows = '';
+        for (let subject in data.subjects) {
+          let scores = data.subjects[subject].map(score => `<td>${score}</td>`).join('');
+          subjectRows += `<tr><td>${subject}</td>${scores}</tr>`;
+        }
+        document.getElementById('subjectTable').innerHTML = subjectRows;
+
+        errorMsg.style.display = 'none';
+        studentData.style.display = 'block';
+      } else {
+        studentData.style.display = 'none';
+        errorMsg.style.display = 'block';
+      }
+    }
+  </script>
+</body>
+</html>
+<!-- This code creates a student portal where users can enter a roll number to fetch student details. It includes animations, progress bars, and attendance circles for a modern look. -->
+<!-- The student data is hardcoded for demonstration purposes, but can be easily adapted to fetch from a database or API. -->
+<!-- The design is responsive and works well on both desktop and mobile devices. -->
